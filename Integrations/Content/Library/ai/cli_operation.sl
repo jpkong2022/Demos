@@ -1,7 +1,6 @@
 namespace: ai
 flow:
   name: get_cpu_usage
-  namespace: my_namespace
   description: |
     This workflow retrieves the CPU usage of a Linux server based on its IP address.
   inputs:
