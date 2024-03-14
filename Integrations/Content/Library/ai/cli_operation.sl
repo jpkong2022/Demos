@@ -1,36 +1,42 @@
 namespace: ai
 flow:
-  name: cli_operation
-  workflow:
-    - ssh_command:
-        do:
-          io.cloudslang.base.ssh.ssh_command:
-            - host: 172.31.75.22
-            - command: whoami
-            - username: centos
-            - password:
-                value: 'go.MF.admin123!'
-                sensitive: true
-        publish:
-          - user: '${return_result}'
-        navigate:
-          - SUCCESS: SUCCESS
-          - FAILURE: on_failure
-  results:
-    - SUCCESS
-    - FAILURE
-extensions:
-  graph:
-    steps:
-      ssh_command:
-        x: 160
-        'y': 120
-        navigate:
-          d4766198-eb1f-d2b4-ea3a-51c87cefc1f4:
-            targetId: 96abb0fa-ec51-b374-2a84-70ee86b28b62
-            port: SUCCESS
-    results:
-      SUCCESS:
-        96abb0fa-ec51-b374-2a84-70ee86b28b62:
-          x: 360
-          'y': 160
+  name: get_cpu_usage
+  namespace: my_namespace
+  description: |
+    This workflow retrieves the CPU usage of a Linux server based on its IP address.
+  inputs:
+    - name: ip_address
+      required: true
+      description: The IP address of the Linux server to query.
+
+  steps:
+    - name: ssh_command
+      action: "ssh:run_command"
+      inputs:
+        host: "${ip_address}"
+        port: "22"
+        username: "your_ssh_username"
+        password: "your_ssh_password"
+        command: "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\([0-9.]*\)%* id.*/\1/' | awk '{print 100 - $1}'"
+
+    - name: parse_cpu_usage
+      action: "string:split"
+      inputs:
+        delimiter: "\n"
+        text: "${ssh_command.result}"
+      outputs:
+        - name: cpu_usage_lines
+
+    - name: extract_cpu_usage
+      action: "string:split"
+      inputs:
+        delimiter: " "
+        text: "${cpu_usage_lines[0]}"
+      outputs:
+        - name: cpu_usage_values
+
+  outputs:
+    - name: cpu_usage_percentage
+      value: "${cpu_usage_values[0]}"
+    - name: raw_results
+      value: "${ssh_command.result}"
