@@ -12,7 +12,7 @@ flow:
                 value: 'Automation.123'  # Replace with your SSH password
                 sensitive: true
         publish:
-          - port_80_open: '${return_result > 0}'
+          - port_80_open: '${return_result}'
         navigate:
           - SUCCESS: SUCCESS
           - FAILURE: FAILURE
