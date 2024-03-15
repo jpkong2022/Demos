@@ -1,6 +1,6 @@
 namespace: ai
 flow:
-  name: get_cpu_utilization
+  name: cli_operation
   workflow:
     - ssh_command:
         do:
