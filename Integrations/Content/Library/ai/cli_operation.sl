@@ -1,4 +1,5 @@
 namespace: ai
+executions:
   - flow: get_cpu_utilization
     inputs:
       ip_address: ${ip_address}
