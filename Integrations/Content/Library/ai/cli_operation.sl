@@ -1,16 +1,27 @@
 namespace: ai
-executions:
-  - flow: get_cpu_utilization
-    inputs:
-      ip_address: ${ip_address}
+workflow:
+  name: Get_CPU_Utilization
+  version: '1.0'
+  description: |
+    A workflow to retrieve CPU utilization of a Linux server using CloudSlang.
 
-flows:
-  get_cpu_utilization:
-    steps:
-      - name: Get CPU Usage
-        action: linux.get_cpu_usage
-        input:
-          ip_address: ${ip_address}
-        publish:
-          cpu_utilization: '${linux.get_cpu_usage.cpu_utilization}'
-          results: '${linux.get_cpu_usage.results}'
+  inputs:
+    - server_ip
+    - username
+    - password
+    - ssh_port: '22'  # Default SSH port
+
+  tasks:
+    get_cpu_utilization:
+      action: csactions:run_ssh_command
+      inputs:
+        host: "${server_ip}"
+        port: "${ssh_port}"
+        username: "${username}"
+        password: "${password}"
+        command: "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\([0-9.]*\)%* id.*/\1/' | awk '{print 100 - $1}'"
+      publish:
+        cpu_utilization: "${$Output}"
+
+  outputs:
+    - cpu_utilization
