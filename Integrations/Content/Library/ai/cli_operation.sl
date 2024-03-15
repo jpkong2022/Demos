@@ -1,43 +1,27 @@
 namespace: ai
 # Define the workflow name
+# Define the flow
 flow:
-name: GetLinuxCpuUtilization
+  name: GetCpuUtilization
+  begin:
+    # Step 1: Connect to the Linux Server (SSH)
+    - ssh:
+        host: ${server_ip}  # Replace with the actual server IP
+        username: ${username}  # Replace with the SSH username
+        password: ${password}  # Replace with the SSH password
+        command: "top -n 1 -b | grep 'Cpu(s)'"
+      publish:
+        - cpu_output: "${ssh.result}"
 
-# Define workflow inputs
-inputs:
-  server_ip:
-    description: IP address of the Linux server
-    type: string
-
-# Define workflow outputs
-outputs:
-  cpu_utilization:
-    description: CPU utilization percentage
-    type: string
-
-# Define workflow stages
-stages:
-  - name: Get CPU info
-    steps:
-      - name: Run script - Get CPU utilization
-        type: script
+    # Step 2: Parse the Output
+    - python_script:
         script: |
-          # Use 'sh' interpreter (modify if needed)
-          sh """
-          # Get CPU idle time using 'vmstat 1 2' (capture two samples) | awk '{print $13}' | tail -n 1
-          idle_time=$(vmstat 1 2 | awk '{print $13}' | tail -n 1)
-          # Get total CPU time using 'vmstat 1 2' (capture two samples) | awk '{print $14 + $15}' | tail -n 1
-          total_time=$(vmstat 1 2 | awk '{print $14 + $15}' | tail -n 1)
-          # Calculate CPU utilization (percentage)
-          cpu_utilization=$((100 - (idle_time * 100) / total_time))
-          # Set output variable
-          setOutput "cpu_utilization" "$cpu_utilization"
-          """
+          cpu_line = input['cpu_output'].splitlines()[0]
+          cpu_utilization = cpu_line.split(',')[3].split()[0]
+          return {'cpu_utilization': cpu_utilization}
+      publish:
+        - cpu_utilization: "${python_script.result['cpu_utilization']}"
 
-  - name: Set output
-    steps:
-      - name: Set workflow output - CPU utilization
-        type: script
-        script: |
-          setOutput "cpu_utilization" <% $.GetCPUinfo.cpu_utilization %>
-
+    # Step 3: Return the Result
+    - end:
+        result: "${cpu_utilization}"
