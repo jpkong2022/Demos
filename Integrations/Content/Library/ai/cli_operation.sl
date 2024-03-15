@@ -1,28 +1,22 @@
 namespace: ai
-
-# Define the flow
 flow:
-  name: GetCpuUtilization
-  begin:
-    # Step 1: Connect to the Linux Server (SSH)
-    - ssh:
-        host: ${server_ip}  # Replace with the actual server IP
-        username: ${username}  # Replace with the SSH username
-        password: ${password}  # Replace with the SSH password
-        command: "top -n 1 -b | grep 'Cpu(s)'"
-      publish:
-        - cpu_output: "${ssh.result}"
-
-    # Step 2: Parse the Output
-    - python_script:
-        script: |
-          cpu_line = input['cpu_output'].splitlines()[0]
-          cpu_utilization = cpu_line.split(',')[3].split()[0]
-          return {'cpu_utilization': cpu_utilization}
-      publish:
-        - cpu_utilization: "${python_script.result['cpu_utilization']}"
-
-    # Step 3: Return the Result
-    - end:
-        result: "${cpu_utilization}"
+  name: get_cpu_utilization
+  workflow:
+    - ssh_command:
+        do:
+          io.cloudslang.base.ssh.ssh_command:
+            - host: 172.31.75.22  # Replace with your Linux host IP
+            - command: "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\([0-9.]*\)%* id.*/\1/' | awk '{print 100 - $1}'"
+            - username: centos  # Replace with your SSH username
+            - password:
+                value: 'go.MF.admin123!'  # Replace with your SSH password
+                sensitive: true
+        publish:
+          - cpu_utilization: '${return_result}'
+        navigate:
+          - SUCCESS: SUCCESS
+          - FAILURE: FAILURE
+  results:
+    - SUCCESS
+    - FAILURE
 
