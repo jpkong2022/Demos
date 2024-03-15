@@ -5,17 +5,17 @@ flow:
     - ssh_command:
         do:
           io.cloudslang.base.ssh.ssh_command:
-            - host: 172.31.75.22  # Replace with your Linux host IP
-            - command: "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\([0-9.]*\)%* id.*/\1/' | awk '{print 100 - $1}'"
-            - username: centos  # Replace with your SSH username
+            - host: 172.31.75.22
+            - command: whoami
+            - username: centos
             - password:
-                value: 'go.MF.admin123!'  # Replace with your SSH password
+                value: 'go.MF.admin123!'
                 sensitive: true
         publish:
-          - cpu_utilization: '${return_result}'
+          - user: '${return_result}'
         navigate:
           - SUCCESS: SUCCESS
-          - FAILURE: FAILURE
+          - FAILURE: on_failure
   results:
     - SUCCESS
     - FAILURE
