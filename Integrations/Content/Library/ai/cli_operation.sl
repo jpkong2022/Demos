@@ -1,5 +1,5 @@
 namespace: ai
-# Define the workflow name
+
 # Define the flow
 flow:
   name: GetCpuUtilization
@@ -25,3 +25,4 @@ flow:
     # Step 3: Return the Result
     - end:
         result: "${cpu_utilization}"
+
