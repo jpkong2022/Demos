@@ -1,4 +1,5 @@
 namespace: ai
+
 flow:
   name: cleanup3
   inputs:
@@ -16,7 +17,7 @@ flow:
                 value: '${sshPassword}'
                 sensitive: true
         publish:
-          - cleanup_result: io.cloudslang.base.utils.output_data: {}
+          - cleanup_result: '${return_result}'
         navigate:
           - SUCCESS: SUCCESS
           - FAILURE: FAILURE
