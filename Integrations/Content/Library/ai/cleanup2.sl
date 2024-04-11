@@ -1,5 +1,4 @@
 namespace:ai
-
 flow:
   name: cleanup2
   inputs:
