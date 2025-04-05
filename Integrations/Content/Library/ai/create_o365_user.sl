@@ -1,4 +1,4 @@
-namespace: io.cloudslang.orchestration.office365
+namespace:office365.user
 flow:
   name: create_o365_user
   inputs:
