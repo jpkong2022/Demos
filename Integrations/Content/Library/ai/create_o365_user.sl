@@ -4,7 +4,7 @@ flow:
   inputs:
     - tenant_id:
         required: true
-        description: >
+        description: 
           The Azure AD tenant ID (e.g.,  your_domain.onmicrosoft.com or a GUID).
     - client_id:
         required: true
@@ -15,7 +15,7 @@ flow:
         description: The client secret for the registered application.
     - user_principal_name:
         required: true
-        description: >
+        description: 
           The user principal name (UPN) of the user (e.g., adele.vance@contoso.com).
           This is the primary sign-in name.
     - display_name:
@@ -23,7 +23,7 @@ flow:
         description: The display name for the user (e.g., Adele Vance).
     - mail_nickname:
         required: true
-        description: >
+        description: 
           The mail alias for the user (e.g., AdeleV). Must be unique within the tenant.
     - password:
         required: true
@@ -31,16 +31,16 @@ flow:
         description: The initial password for the user.
     - force_change_password_on_next_login:
         default: "true"
-        description: >
+        description: 
           Specifies whether the user must change their password at the next sign-in.
           Value should be 'true' or 'false'.
     - account_enabled:
         default: "true"
-        description: >
+        description: 
           Specifies whether the account is enabled. Value should be 'true' or 'false'.
           Value should be 'true' or 'false'.
     - usage_location:
-        description: >
+        description: 
           A two-letter country code (ISO standard 3166). Required for users assigned licenses;
           otherwise optional (e.g., US, GB).
     - proxy_host:
@@ -62,7 +62,7 @@ flow:
             - url: ${'https://login.microsoftonline.com/' + tenant_id + '/oauth2/v2.0/token'}
             - method: POST
             - headers: 'Content-Type: application/x-www-form-urlencoded'
-            - form_params: >
+            - form_params: 
                 ${{
                   'client_id': client_id,
                   'scope': 'https://graph.microsoft.com/.default',
@@ -100,7 +100,7 @@ flow:
           # For simplicity here, we build the string directly. A real scenario
           # might use io.cloudslang.base.json.json_builder or similar.
           io.cloudslang.base.scriptlets.append:
-            - value: >
+            - value: 
                 ${'
                 {
                   "accountEnabled": ' + (account_enabled == 'true' ? 'true' : 'false') + ',
