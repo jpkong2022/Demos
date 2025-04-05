@@ -2,58 +2,20 @@ namespace: ai
 flow:
   name: create_o365_user
   inputs:
-    - tenant_id:
-        required: true
-        description: 
-          The Azure AD tenant ID (e.g.,  your_domain.onmicrosoft.com or a GUID).
-    - client_id:
-        required: true
-        description: The Application (client) ID registered in Azure AD.
-    - client_secret:
-        required: true
-        sensitive: true
-        description: The client secret for the registered application.
-    - user_principal_name:
-        required: true
-        description: 
-          The user principal name (UPN) of the user (e.g., adele.vance@contoso.com).
-          This is the primary sign-in name.
-    - display_name:
-        required: true
-        description: The display name for the user (e.g., Adele Vance).
-    - mail_nickname:
-        required: true
-        description: 
-          The mail alias for the user (e.g., AdeleV). Must be unique within the tenant.
-    - password:
-        required: true
-        sensitive: true
-        description: The initial password for the user.
-    - force_change_password_on_next_login:
-        default: "true"
-        description: 
-          Specifies whether the user must change their password at the next sign-in.
-          Value should be 'true' or 'false'.
-    - account_enabled:
-        default: "true"
-        description: 
-          Specifies whether the account is enabled. Value should be 'true' or 'false'.
-          Value should be 'true' or 'false'.
-    - usage_location:
-        description: 
-          A two-letter country code (ISO standard 3166). Required for users assigned licenses;
-          otherwise optional (e.g., US, GB).
-    - proxy_host:
-        description: The proxy server host.
-    - proxy_port:
-        default: "8080"
-        description: The proxy server port.
-    - proxy_username:
-        description: The proxy server username.
-    - proxy_password:
-        description: The proxy server password.
-        sensitive: true
-
+    - tenant_id
+    - client_id
+    - client_secret
+    - user_principal_name
+    - display_name
+    - mail_nickname
+    - password
+    - force_change_password_on_next_login
+    - account_enabled
+    - usage_location
+    - proxy_host
+    - proxy_port
+    - proxy_username
+    - proxy_password
   workflow:
     # 1. Get OAuth2 Access Token for Microsoft Graph API
     - get_access_token:
