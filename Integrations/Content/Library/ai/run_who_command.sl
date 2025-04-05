@@ -29,7 +29,7 @@ flow:
   workflow:
     - execute_who:
         do:
-          io.cloudslang.base.remote_command_execution.ssh_command:
+          io.cloudslang.base.ssh.ssh_command:
             - host: ${host}
             - port: ${port}
             - username: ${username}
