@@ -1,4 +1,4 @@
-namespace:office365.user
+namespace:ai
 flow:
   name: create_o365_user
   inputs:
