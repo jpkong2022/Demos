@@ -5,7 +5,7 @@ flow:
     - tenant_id:
         required: true
         description: >
-          The Azure AD tenant ID (e.g., your_domain.onmicrosoft.com or a GUID).
+          The Azure AD tenant ID (e.g.,  your_domain.onmicrosoft.com or a GUID).
     - client_id:
         required: true
         description: The Application (client) ID registered in Azure AD.
