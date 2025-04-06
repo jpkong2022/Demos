@@ -1,4 +1,4 @@
-namespace: ai
+namespace:ai
 imports:
   network: io.cloudslang.base.network
 flow:
