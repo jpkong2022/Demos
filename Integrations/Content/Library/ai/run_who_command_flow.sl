@@ -1,8 +1,4 @@
 namespace: ai
-
-imports:
- ssh: io.cloudslang.base.remote
-
 flow:
  name: run_who_command_flow
 
