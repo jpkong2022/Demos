@@ -1,4 +1,4 @@
-namespace: io.cloudslang.network.ping
+namespace: ai
 
 imports:
   network: io.cloudslang.base.network
