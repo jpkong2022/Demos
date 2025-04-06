@@ -2,7 +2,7 @@ namespace: ai
 
 flow:
  name: run_who_command
- description: Executes the 'who' command on a remote host via SSH.
+ description:  Executes the 'who' command on a remote host via SSH.
 
  inputs:
   - host:
