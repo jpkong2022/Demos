@@ -1,4 +1,4 @@
-namespace: org.example.integrations.smax
+namespace: ai
 
 imports:
   http: cloudslang/http/http_client
@@ -15,9 +15,8 @@ flow:
         description: The SMAX tenant ID.
         required: true
     - smax_auth_token:
-        description: >
+        description: 
           The authentication token for SMAX API (e.g., LWSSO_COOKIE_KEY value).
-          It's recommended to obtain this securely via a separate authentication flow.
         required: true
         sensitive: true
     - incident_title:
@@ -28,14 +27,12 @@ flow:
         required: false
         default: ""
     - incident_urgency:
-        description: >
+        description: 
           Urgency of the incident (e.g., Low_urgency, Medium_urgency, High_urgency, Critical_urgency).
-          Note: The exact value might depend on SMAX configuration (check Administration > Lists).
         required: false
     - incident_impact:
-        description: >
+        description: 
           Impact of the incident (e.g., Low_impact, Medium_impact, High_impact, Enterprise_impact).
-          Note: The exact value might depend on SMAX configuration (check Administration > Lists).
         required: false
     # Optional Inputs for HTTP Client
     - proxy_host:
