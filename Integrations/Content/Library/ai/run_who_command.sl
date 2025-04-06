@@ -1,57 +1,70 @@
 namespace: ai
 
+imports:
+  ssh: io.cloudslang.base.ssh
+
 flow:
   name: run_who_command
 
   inputs:
     - host:
-        required: true
         description: The hostname or IP address of the target Linux server.
-    - port:
-        default: 22
-        required: false
-        description: The SSH port to connect to. Defaults to 22.
-    - username:
         required: true
+    - username:
         description: The username to connect as.
+        required: true
     - password:
-        required: false
+        description: The password for the user. Use private_key_file for key-based auth.
+        required: true
         sensitive: true
-        description: The password for the user. Use password OR private_key_file.
-    - private_key_file:
+    - port:
+        description: The SSH port on the target server.
+        default: '22'
         required: false
-        description: The path to the private SSH key file. Use password OR private_key_file.
     - timeout:
-        default: 90000 # 90 seconds
+        description: SSH connection timeout in milliseconds.
+        default: '90000'
         required: false
-        description: Timeout for the SSH command execution in milliseconds.
+    # Add private_key_file input if using key-based authentication instead of password
+    # - private_key_file:
+    #     description: The path to the private key file for SSH authentication.
+    #     required: false
 
   workflow:
     - execute_who:
         do:
-          io.cloudslang.base.ssh.ssh_command:
+          ssh.ssh_command:
             - host: ${host}
             - port: ${port}
             - username: ${username}
             - password: ${password}
-            - private_key_file: ${private_key_file}
+            # - private_key_file: ${private_key_file} # Uncomment if using key auth
             - command: "who"
             - timeout: ${timeout}
+            - pty: "false" # Generally not needed for non-interactive commands like 'who'
         publish:
-          - who_stdout: ${stdout}
-          - who_stderr: ${stderr}
-          - return_code: ${return_code}
-          - exception: ${exception}
+          - stdout
+          - stderr
+          - return_code
+          - exception
         navigate:
           - SUCCESS: SUCCESS
-          - FAILURE: FAILURE
+          - FAILURE: ON_FAILURE
 
   outputs:
-    - who_output: ${who_stdout}
-    - command_stderr: ${who_stderr}
-    - command_return_code: ${return_code}
-    - command_exception: ${exception}
+    - stdout:
+        description: The standard output of the 'who' command.
+        value: ${stdout}
+    - stderr:
+        description: The standard error output, if any.
+        value: ${stderr}
+    - return_code:
+        description: The return code of the command execution (0 usually indicates success).
+        value: ${return_code}
+    - exception:
+        description: Any exception message encountered during execution.
+        value: ${exception}
 
   results:
-    - SUCCESS
-    - FAILURE
+    - SUCCESS: ${return_code == '0'}
+    - FAILURE # Implicitly handles non-zero return codes and exceptions via ON_FAILURE branch
