@@ -3,23 +3,11 @@ flow:
  name: run_who_command_flow
 
  inputs:
-  - host:
-    required: true
-    description: The target host (IP or FQDN) to run the 'who' command on.
-  - username:
-    required: true
-    description: The username for SSH login.
-  - password:
-    required: true
-    sensitive: true
-    description: The password for SSH login.
-  # Optional inputs for SSH connection (can add private_key_file etc. if needed)
-  - port:
-    default: "22"
-    description: The SSH port.
-  - timeout:
-    default: "90000" # 90 seconds
-    description: SSH connection timeout in milliseconds.
+  - host
+  - password
+    description
+  - port
+  - timeout
 
  workflow:
   - run_the_who_command:
