@@ -1,6 +1,6 @@
 namespace: ai
 flow:
-  name: delete_user
+  name: ping_servery
   inputs:
     - user_id
   workflow:
