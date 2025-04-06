@@ -17,7 +17,7 @@ flow:
     required: true
   - ssh_port:
     description: The SSH port on the target system.
-    default: '22'
+    default: 22
     required: false
   - force_kill:
     description: If true, uses 'kill -9' (SIGKILL). If false, uses 'kill' (SIGTERM).
@@ -25,7 +25,7 @@ flow:
     required: false
   - ssh_timeout:
     description: SSH connection and command execution timeout in milliseconds.
-    default: '90000' # 90 seconds
+    default: 90000 # 90 seconds
     required: false
  workflow:
   - run_kill_command:
@@ -60,7 +60,7 @@ flow:
     do:
      io.cloudslang.base.utils.equals:
       - first: '${command_return_code}'
-      - second: '0'
+      - second: 0
     navigate:
      - SUCCESS: SUCCESS # Return code 0 means command likely succeeded
      - FAILURE: FAILURE # Non-zero return code indicates an issue (e.g., process not found)
