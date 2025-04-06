@@ -1,8 +1,5 @@
 namespace: ai
 
-imports:
-  network: io.cloudslang.base.network
-
 flow:
   name: ping_server
 
