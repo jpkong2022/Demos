@@ -1,12 +1,9 @@
 namespace: ai
-
 imports:
   ps: io.cloudslang.base.powershell
   utils: io.cloudslang.base.utils
-
 flow:
   name: create_windows_user
-
   inputs:
     - host:
         description: The hostname or IP address of the target Windows machine.
@@ -33,7 +30,6 @@ flow:
         description: Optional timeout in seconds for the WinRM connection.
         required: false
         default: "60"
-
   workflow:
     - check_inputs:
         do:
@@ -55,7 +51,6 @@ flow:
         navigate:
           - SUCCESS: create_user
           - FAILURE: on_failure
-
     - create_user:
         do:
           ps.powershell_script:
@@ -70,7 +65,6 @@ flow:
                 $newUser = "${new_user_name}"
                 $newPassword = ConvertTo-SecureString "${new_user_password}" -AsPlainText -Force
                 $desc = "${description}"
-
                 try {
                     # Check if user already exists
                     $existingUser = Get-LocalUser -Name $newUser -ErrorAction SilentlyContinue
@@ -78,7 +72,6 @@ flow:
                         Write-Error "User '$newUser' already exists."
                         exit 1 # Indicate failure
                     }
-
                     # Create the user
                     $params = @{
                         Name = $newUser
@@ -106,12 +99,10 @@ flow:
         navigate:
           - SUCCESS: ${on_success if return_code == '0' else on_failure} # Check exit code from script
           - FAILURE: on_failure # Operation level failure (e.g., connection)
-
   outputs:
     - result_message: ${return_result}
     - operation_return_code: ${return_code} # Exit code from the script itself
     - operation_exception: ${exception}
-
   results:
     - SUCCESS: ${return_code == '0'}
     - FAILURE
