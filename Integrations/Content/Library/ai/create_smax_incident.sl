@@ -1,9 +1,5 @@
 namespace: ai
 
-imports:
-  http: cloudslang/http/http_client
-  json: cloudslang/json
-
 flow:
   name: create_smax_incident
 
