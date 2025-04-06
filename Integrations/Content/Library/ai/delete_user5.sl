@@ -1,10 +1,10 @@
 namespace: ai
 flow:
-  name: delete_user5
-  inputs:
-    - user_id
-  workflow:
-    - authenticate:
+   name: delete_user5
+   inputs:
+     - user_id
+   workflow:
+     - authenticate:
         do:
           office365.auth.authenticate: []
         publish:
@@ -23,7 +23,7 @@ flow:
         navigate:
           - FAILURE: on_failure
           - SUCCESS: SUCCESS
-  results:
+   results:
     - FAILURE
     - SUCCESS
 
