@@ -42,7 +42,7 @@ flow:
       # - passphrase:
       #     value: "your_passphrase_if_any"
       #     sensitive: true
-      - command: >
+      - command:
         ${'kill ' + ('-9 ' if force_kill else '') + str(process_id)}
       - timeout: ${ssh_timeout}
       -pty: false # Usually not needed for simple kill command
