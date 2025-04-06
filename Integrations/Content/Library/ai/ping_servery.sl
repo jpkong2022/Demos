@@ -1,41 +1,31 @@
 namespace: ai
-
 flow:
-  name: ping_server
-
+  name: delete_user
   inputs:
-    - host
-    - ping_count
-    - timeout
-
+    - user_id
   workflow:
-    - ping_the_host:
+    - authenticate:
         do:
-          network.ping:
-            - host: ${host}
-            - ping_count: ${ping_count}
-            - timeout: ${timeout}
+          office365.auth.authenticate: []
         publish:
-          - return_code: ${return_code}
-          - return_result: ${return_result}
-          - packet_loss: ${packet_loss}
+          - token
         navigate:
-          - SUCCESS: success_step
-          - FAILURE: failure_step
-
-    - success_step:
+          - FAILURE: FAILURE_1
+          - SUCCESS: http_graph_action
+    - http_graph_action:
+        do:
+          office365._tools.http_graph_action:
+            - url: '/users/${user_id}'
+            - token: '${token}'
+            - method: DELETE
+        publish:
+          - http_status: '${return_result}'
         navigate:
+          - FAILURE: FAILURE_2
           - SUCCESS: SUCCESS
-
-    - failure_step:
-        navigate:
-          - SUCCESS: FAILURE
-
   outputs:
-    - return_code: ${return_code}
-    - return_result: ${return_result}
-    - packet_loss: ${packet_loss}
-
+    - http_status: '${http_status}'
   results:
     - SUCCESS
-    - FAILURE
+    - FAILURE_1
+    - FAILURE_2
