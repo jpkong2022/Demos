@@ -61,7 +61,7 @@ flow:
           # This step ideally uses a JSON manipulation operation or scripting
           # For simplicity here, we build the string directly. A real scenario
           # might use io.cloudslang.base.json.json_builder or similar.
-          io.cloudslang.base.scriptlets.append:
+          io.cloudslang.base.strings.append:
             - value: 
                 ${'
                 {
@@ -128,21 +128,21 @@ flow:
     # Failure Paths
     - TOKEN_FAILURE:
         do:
-           io.cloudslang.base.utils.return_failure:
+           io.cloudslang.base.utils.do_nothing:
              - return_result: ${'Failed to obtain access token. Status Code: ' + token_status_code + '. Error: ' + token_error + '. Response: ' + get('return_result','')}
         navigate:
           - FAILURE: FAILURE
 
     - CREATE_FAILURE:
         do:
-           io.cloudslang.base.utils.return_failure:
+           io.cloudslang.base.utils.do_nothing:
              - return_result: ${'Failed to create Office 365 user. Status Code: ' + create_status_code + '. Error: ' + create_error + '. Response: ' + create_response}
         navigate:
           - FAILURE: FAILURE
 
     - on_failure: # Generic catch-all for operation execution errors
        do:
-          io.cloudslang.base.utils.return_failure:
+          io.cloudslang.base.utils.do_nothing:
             - return_result: ${'An unexpected error occurred: ' + error_message}
        navigate:
          - FAILURE: FAILURE
