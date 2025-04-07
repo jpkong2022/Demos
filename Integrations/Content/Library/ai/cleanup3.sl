@@ -26,8 +26,8 @@ flow:
           - return_result: ${return_result} # Raw output from the ping command
           - packet_loss: ${packet_loss} # Percentage of packets lost
         navigate:
-          - SUCCESS: ON_SUCCESS # Continue if ping command executed (regardless of reachability)
-          - FAILURE: ON_FAILURE # If the operation itself failed to run
+          - SUCCESS: SUCCESS # Continue if ping command executed (regardless of reachability)
+          - FAILURE: FAILURE # If the operation itself failed to run
 
     - ON_SUCCESS:
         # You could add logic here to check return_code or packet_loss
