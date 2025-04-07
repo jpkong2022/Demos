@@ -2,7 +2,9 @@ namespace: ai
 flow:
   name: delete_user
   inputs:
-    - user_id
+    - user_principal_name:
+        required: true
+        description: The User Principal Name (e.g., user@domain.com) or the user object ID of the user to delete.
   workflow:
     - authenticate:
         do:
@@ -10,22 +12,22 @@ flow:
         publish:
           - token
         navigate:
-          - FAILURE: FAILURE_1
-          - SUCCESS: http_graph_action
-    - http_graph_action:
+          - FAILURE: on_failure
+          - SUCCESS: http_graph_action_delete
+    - http_graph_action_delete:
         do:
           office365._tools.http_graph_action:
-            - url: '/users/${user_id}'
+            - url: '/users/${user_principal_name}'  # Construct URL with the user identifier
             - token: '${token}'
-            - method: DELETE
+            - method: DELETE                 # Use DELETE method
+            # No body is typically needed for a DELETE request
         publish:
-          - http_status: '${return_result}'
+          - delete_response: '${return_result}' # Publish the result/status from the HTTP action
         navigate:
-          - FAILURE: FAILURE_2
+          - FAILURE: on_failure
           - SUCCESS: SUCCESS
   outputs:
-    - http_status: '${http_status}'
+    - delete_response: '${delete_response}'
   results:
+    - FAILURE
     - SUCCESS
-    - FAILURE_1
-    - FAILURE_2
