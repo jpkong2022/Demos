@@ -53,7 +53,7 @@ flow:
             - proxy_host: "${proxy_host if proxy_host is not none else get_sp('proxy_host', '')}"
             - proxy_port: "${proxy_port if proxy_port is not none else get_sp('proxy_port', '8080')}"
             - form_params_are_urlencoded: 'true' # Required for application/x-www-form-urlencoded
-            - form_params: >
+            - form_params: 
                 ${{
                   'client_id': client_id,
                   'scope': 'https://graph.microsoft.com/.default',
@@ -88,12 +88,12 @@ flow:
             - url: "${graph_api_url + '/users'}"
             - proxy_host: "${proxy_host if proxy_host is not none else get_sp('proxy_host', '')}"
             - proxy_port: "${proxy_port if proxy_port is not none else get_sp('proxy_port', '8080')}"
-            - headers: >
+            - headers: 
                 ${{
                   'Authorization': 'Bearer ' + access_token,
                   'Content-Type': 'application/json'
                 }}
-            - body: >
+            - body: 
                 ${{
                   "accountEnabled": account_enabled,
                   "displayName": display_name,
@@ -117,7 +117,7 @@ flow:
           - FAILURE: on_failure # Handle non-201 status codes
 
   outputs:
-    - user_creation_response: >
+    - user_creation_response: 
         ${{
           # Return the full response on success, or an error structure on failure
           user_creation_response if status_code_user == '201' else {
