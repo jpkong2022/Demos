@@ -31,14 +31,16 @@ flow:
             - token: '${token}'
             - method: PATCH # Use PATCH to update existing user properties
             - body: 
-                ${'''
-                {
+                ${{
+                  "accountEnabled": account_enabled,
+                  "displayName": display_name,
+                  "mailNickname": mail_nickname,
+                  "userPrincipalName": user_principal_name,
                   "passwordProfile": {
-                    "forceChangePasswordNextSignIn": %s,
-                    "password": "%s"
+                    "forceChangePasswordNextSignIn": force_change_password,
+                    "password": initial_password
                   }
-                }
-                }
+                }}
         publish:
           - status_code: '${return_code}'
           - response_body: '${return_result}'
