@@ -1,6 +1,4 @@
 namespace: ai
-imports:
-  network: io.cloudslang.base.network
 
 flow:
   name: ping_server
@@ -21,7 +19,7 @@ flow:
   workflow:
     - ping_the_host:
         do:
-          network.ping:
+          io.cloudslang.base.network.ping:
             - host: ${host}
             - ping_count: ${ping_count}
             - timeout: ${timeout}
