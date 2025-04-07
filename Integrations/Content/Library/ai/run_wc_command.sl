@@ -1,8 +1,5 @@
 namespace: ai
 
-imports:
- ssh: io.cloudslang.base.remote_command_execution
-
 flow:
  name: run_wc_command
 
@@ -39,7 +36,7 @@ flow:
  workflow:
   - run_wc_on_target:
     do:
-     ssh.ssh_command:
+     io.cloudslang.base.ssh.ssh_command:
       - host: ${host}
       - port: ${port}
       - username: ${username}
