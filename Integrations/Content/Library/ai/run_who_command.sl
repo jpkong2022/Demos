@@ -41,11 +41,6 @@ flow:
     publish:
      - command_output: ${return_result} # Raw output from cmd_runner
 
-    navigate:
-     - SUCCESS: SUCCESS
-     - FAILURE: FAILURE
-
-
  results:
   - SUCCESS
   - FAILURE
