@@ -51,8 +51,8 @@ flow:
      - return_code: ${return_code}
      - return_result: ${return_result}
     navigate:
-     - SUCCESS: ${return_code == '0'}
-     - FAILURE: ${return_code != '0'}
+     - SUCCESS: SUCCESS
+     - FAILURE: FAILURE
  results:
   - SUCCESS
   - FAILURE
