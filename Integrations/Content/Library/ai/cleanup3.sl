@@ -10,9 +10,9 @@ flow:
     - ssh_command:
         do:
           io.cloudslang.base.ssh.ssh_command:
-            - host: '${host}'
+            - host: ${host}
             - command: "rm -rf /tmp/*"
-            - username: '${sshUsername}'
+            - username: ${sshUsername}
             - password:
                 value: '${sshPassword}'
                 sensitive: true
