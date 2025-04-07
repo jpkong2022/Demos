@@ -46,7 +46,7 @@ flow:
           - response_body: '${return_result}'
         navigate:
           # Check status code, typically 204 No Content for successful PATCH
-          - SUCCESS: ${status_code >= 200 and status_code < 300}
+          - SUCCESS: SUCCESS
           - FAILURE: on_failure # Any other status code is treated as failure
   outputs:
     - status_code: '${status_code}'
