@@ -27,9 +27,14 @@ flow:
         do:
           # Using the generic HTTP action to call MS Graph API
           office365._tools.http_graph_action:
-            - url: ${'/users/' + user_principal_name} # Construct user-specific URL
-            - token: '${token}'
-            - method: PATCH # Use PATCH to update existing user properties
+            - url: "${graph_api_url + '/users'}"
+            - proxy_host: "${proxy_host if proxy_host is not none else get_sp('proxy_host', '')}"
+            - proxy_port: "${proxy_port if proxy_port is not none else get_sp('proxy_port', '8080')}"
+            - headers: 
+                ${{
+                  'Authorization': 'Bearer ' + access_token,
+                  'Content-Type': 'application/json'
+                }}
             - body: 
                 ${{
                   "accountEnabled": account_enabled,
