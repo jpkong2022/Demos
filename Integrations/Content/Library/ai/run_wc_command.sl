@@ -53,18 +53,6 @@ flow:
     navigate:
      - SUCCESS: ${return_code == '0'}
      - FAILURE: ${return_code != '0'}
-
- outputs:
-  - wc_output:
-    description: The standard output of the wc command.
-    value: ${wc_output}
-  - error_message:
-    description: Any error output from the wc command or SSH execution.
-    value: ${error_message}
-  - return_code:
-    description: The return code of the remote command execution (0 typically indicates success).
-    value: ${return_code}
-
  results:
   - SUCCESS
   - FAILURE
