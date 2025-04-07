@@ -45,11 +45,7 @@ flow:
      - SUCCESS: SUCCESS
      - FAILURE: FAILURE
 
- outputs:
-  - command_exit_code: ${return_code}
-   description: The exit code returned by the 'who' command (0 typically indicates success).
-
 
  results:
-  - SUCCESS: ${return_code == '0'} # Define success as a 0 exit code
+  - SUCCESS
   - FAILURE
