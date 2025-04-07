@@ -30,7 +30,7 @@ flow:
             - url: ${'/users/' + user_principal_name} # Construct user-specific URL
             - token: '${token}'
             - method: PATCH # Use PATCH to update existing user properties
-            - body: |-
+            - body: 
                 ${'''
                 {
                   "passwordProfile": {
