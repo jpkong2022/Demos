@@ -29,13 +29,6 @@ flow:
           - SUCCESS: SUCCESS # Continue if ping command executed (regardless of reachability)
           - FAILURE: FAILURE # If the operation itself failed to run
 
-    - ON_SUCCESS:
-        # You could add logic here to check return_code or packet_loss
-        # For this basic example, just return success if the ping command ran.
-        return: SUCCESS
-
-    - ON_FAILURE:
-       return: FAILURE
   results:
     - SUCCESS
     - FAILURE
