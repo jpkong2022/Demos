@@ -40,20 +40,15 @@ flow:
       - command: "who"
     publish:
      - command_output: ${return_result} # Raw output from cmd_runner
-     - stdout # Standard output specifically
-     - stderr # Standard error specifically
      - return_code # Exit code of the command
     navigate:
      - SUCCESS: SUCCESS
      - FAILURE: FAILURE
 
  outputs:
-  - who_output: ${stdout}
-   description: The standard output of the 'who' command.
   - command_exit_code: ${return_code}
    description: The exit code returned by the 'who' command (0 typically indicates success).
-  - error_output: ${stderr}
-   description: Any errors reported to standard error during command execution.
+
 
  results:
   - SUCCESS: ${return_code == '0'} # Define success as a 0 exit code
