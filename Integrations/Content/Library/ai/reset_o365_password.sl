@@ -38,7 +38,7 @@ flow:
                     "password": "%s"
                   }
                 }
-                ''' % (force_change_password, new_password)}
+                }
         publish:
           - status_code: '${return_code}'
           - response_body: '${return_result}'
