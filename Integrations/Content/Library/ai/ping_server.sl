@@ -39,11 +39,6 @@ flow:
     - ON_FAILURE:
        return: FAILURE
 
-  outputs:
-    - return_code: ${return_code}
-    - return_result: ${return_result}
-    - packet_loss: ${packet_loss}
-
   results:
     - SUCCESS
     - FAILURE
