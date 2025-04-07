@@ -15,20 +15,27 @@ flow:
         required: false
         default: '5000' # Default to 5 seconds
   workflow:
-    - ssh_command:
+    - ping_the_host:
         do:
-          io.cloudslang.base.ssh.ssh_command:
+          io.cloudslang.base.network.ping:
             - host: ${host}
-            - command: "rm -rf /tmp/*"
-            - username: ${sshUsername}
-            - password:
-                value: '${sshPassword}'
-                sensitive: true
+            - ping_count: ${ping_count}
+            - timeout: ${timeout}
         publish:
-          - cleanup_result: '${return_result}'
+          - return_code: ${return_code}
+          - return_result: ${return_result} # Raw output from the ping command
+          - packet_loss: ${packet_loss} # Percentage of packets lost
         navigate:
-          - SUCCESS: SUCCESS
-          - FAILURE: FAILURE
+          - SUCCESS: ON_SUCCESS # Continue if ping command executed (regardless of reachability)
+          - FAILURE: ON_FAILURE # If the operation itself failed to run
+
+    - ON_SUCCESS:
+        # You could add logic here to check return_code or packet_loss
+        # For this basic example, just return success if the ping command ran.
+        return: SUCCESS
+
+    - ON_FAILURE:
+       return: FAILURE
   results:
     - SUCCESS
     - FAILURE
