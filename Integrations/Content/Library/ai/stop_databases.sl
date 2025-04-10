@@ -38,32 +38,6 @@ flow:
         required: false
 
   workflow:
-    - stop_mssql_on_windows:
-        do:
-          powershell.powershell_script:
-            - host: ${windows_host}
-            - username: ${windows_username}
-            - password: ${windows_password}
-            - auth_type: ${windows_auth_type}
-            - trust_all_roots: ${windows_trust_all_roots}
-            - script: |
-                Write-Host "Attempting to stop service: ${mssql_service_name}"
-                Stop-Service -Name "${mssql_service_name}" -Force -ErrorAction Stop
-                Start-Sleep -Seconds 5 # Give service time to stop
-                $svc = Get-Service -Name "${mssql_service_name}"
-                if ($svc.Status -ne 'Stopped') {
-                    Write-Error "Service ${mssql_service_name} did not stop. Current status: $($svc.Status)"
-                    exit 1 # Ensure script fails if service isn't stopped
-                }
-                Write-Host "Service ${mssql_service_name} stopped successfully."
-                exit 0
-        publish:
-          - mssql_stop_result: '${return_result}'
-          - mssql_stop_error: '${stderr}'
-          - mssql_script_exit_code: '${script_exit_code}'
-        navigate:
-          - SUCCESS: stop_oracle_on_linux # Proceed to Oracle stop on success
-          - FAILURE: on_failure
 
     - stop_oracle_on_linux:
         do:
