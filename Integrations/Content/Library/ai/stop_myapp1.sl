@@ -1,122 +1,112 @@
 namespace: ai
-
 flow:
   name: stop_myapp1
-  description: Stops the myapp1 application by stopping its dependency Apache server service.
-
   inputs:
-    # Inputs for connecting to the Apache Server (apacheserver1)
-    - apache_host:
-        description: Hostname or IP address of the Apache server (apacheserver1).
+    # --- WebLogic Server Details (apacheserver1) ---
+    - wls_admin_host:
+        default: "apacheserver1" # Use the actual hostname or IP
         required: true
-    - apache_user:
-        description: Username for SSH connection to the Apache server.
+    - wls_admin_port:
+        default: "7001" # Default WebLogic admin port
         required: true
-    - apache_password:
-        description: Password for the apache_user on the Apache server.
+    - wls_username:
+        required: true
+    - wls_password:
         required: true
         sensitive: true
-    - apache_service_name:
-        description: The name of the Apache service to stop (e.g., httpd, apache2).
-        default: 'httpd' # Common default for RHEL/CentOS, adjust if needed (e.g., 'apache2' for Debian/Ubuntu)
+    - wlst_path: # Path to wlst.sh/wlst.cmd on the target server
+        default: "/path/to/oracle_common/common/bin/wlst.sh" # Adjust for your environment
         required: true
+    - app_name:
+        default: "myapp1"
+        required: true
+
+    # --- SSH Connection Details for WebLogic Server ---
+    - ssh_username: # User to SSH into the WebLogic server host
+        required: true
+    - ssh_password: # Password for SSH user
+        required: true
+        sensitive: true
     - ssh_port:
-        description: SSH port for the Apache server.
-        default: '22'
+        default: "22"
         required: false
     - ssh_timeout:
-        description: SSH connection timeout in milliseconds.
-        default: '90000' # 90 seconds
+        default: "90000" # milliseconds
         required: false
-    # Optional: Inputs for connecting to the Oracle Server (oracleserver1) if needed for a coordinated stop
-    # - oracle_host:
-    # - oracle_user:
-    # - oracle_password:
-    # - oracle_service_name: # e.g., listener or specific instance SID
 
-    # Optional Proxy Inputs (if connection needs to go through a proxy)
-    - proxy_host:
-        required: false
-    - proxy_port:
-        default: '8080'
-        required: false
-    - proxy_username:
-        required: false
-    - proxy_password:
-        required: false
-        sensitive: true
+    # --- Optional Proxy Details (if needed for SSH/WLST connection) ---
+    # Add proxy inputs (proxy_host, proxy_port, etc.) if required by ssh_command or WLST itself
 
   workflow:
-    # Step 1: Stop the Apache service on apacheserver1
-    - stop_apache_service:
+    # Step 1: Construct the WLST command to stop the application
+    - construct_wlst_command:
         do:
-          # Using a common SSH command operation. Replace with the specific operation available in your OO environment if different.
-          # Assumes io.cloudslang.base content pack is available.
-          # Assumes the target OS uses systemd (systemctl). Adjust command if using init.d (service)
-          io.cloudslang.base.remote_command_execution.ssh_command:
-            - host: ${apache_host}
-            - port: ${ssh_port}
-            - username: ${apache_user}
-            - password:
-                value: ${apache_password}
-                sensitive: true
-            # Command to stop the service. Using sudo is common.
-            # Ensure the apache_user has passwordless sudo rights for this command,
-            # or use root user (less recommended), or handle sudo password prompt if the operation supports it.
-            - command: "sudo systemctl stop ${apache_service_name}"
-            - timeout: ${ssh_timeout}
-            - proxy_host: ${proxy_host}
-            - proxy_port: ${proxy_port}
-            - proxy_username: ${proxy_username}
-            - proxy_password:
-                value: ${proxy_password}
-                sensitive: true
-            # Add other relevant ssh options if needed (e.g., private_key_file, known_hosts_policy)
+          # This step isn't strictly necessary as we can build the command
+          # directly in the next step, but it can improve readability.
+          # Using io.cloudslang.base.utils.string_formatter might be cleaner
+          # but simple concatenation works too.
+          # Note: Adjust WLST commands based on your specific WebLogic version and security setup (e.g., t3s for SSL)
+          io.cloudslang.base.utils.do_nothing: # Placeholder, real logic is in publish
         publish:
-          - apache_stop_return_code: ${return_code}
-          - apache_stop_output: ${return_result} # Standard output
-          - apache_stop_error: ${error_message} # Standard error or exception message
+          # Carefully construct the command string. Quotes are important.
+          # This assumes wlst.sh can be run directly.
+          # It connects, stops the application, disconnects, and exits.
+          - wlst_command: >
+              ${wlst_path} -skipWLSModuleScanning <<-EOF
+              connect('${wls_username}', '${wls_password}', 't3://${wls_admin_host}:${wls_admin_port}')
+              stopApplication('${app_name}')
+              disconnect()
+              exit()
+              EOF
         navigate:
-          # Check the return code of the ssh_command operation itself AND the command executed
-          - SUCCESS: check_apache_stop_result # ssh command executed successfully, now check the command's exit code
-          - FAILURE: on_failure # ssh command failed to execute (e.g., connection error)
+          - SUCCESS: execute_stop_command
+          - FAILURE: on_failure # Should not fail unless there's an internal error
 
-    # Step 2: Check the result of the stop command
-    - check_apache_stop_result:
+    # Step 2: Execute the WLST command remotely via SSH on the WebLogic server host
+    - execute_stop_command:
         do:
-          # Simple check if return_code from the command execution is 0 (success)
-          io.cloudslang.base.comparisons.equal:
-            - value1: ${apache_stop_return_code}
-            - value2: '0'
+          # Using the standard SSH command operation
+          io.cloudslang.base.remote_command_execution.ssh_command:
+            - host: ${wls_admin_host} # SSH target is the WebLogic server host
+            - port: ${ssh_port}
+            - username: ${ssh_username}
+            - password:
+                value: ${ssh_password}
+                sensitive: true
+            - command: ${wlst_command} # The command constructed in the previous step
+            - timeout: ${ssh_timeout}
+            # Add other SSH parameters if needed (pty, private_key_file, etc.)
+        publish:
+          - ssh_return_code: ${return_code}
+          - ssh_return_result: ${return_result}
+          - ssh_exception: ${exception}
         navigate:
-          # If apache_stop_return_code == 0
-          - SUCCESS: SUCCESS # Apache service stop command executed successfully
-          # If apache_stop_return_code != 0
-          - FAILURE: on_failure # Apache service stop command failed
+          # Check the return code from the SSH command execution itself
+          - SUCCESS: check_wlst_result # SSH command ran, now check WLST output/code
+          - FAILURE: on_failure     # SSH command failed to execute (e.g., connection error)
 
-    # (Optional) Step 3: Stop Oracle Service on oracleserver1
-    # If stopping the Oracle DB is also required as part of stopping myapp1, add steps here similar to stop_apache_service
-    # - stop_oracle_service:
-    #     do:
-    #       # Use appropriate operation (e.g., ssh_command, sql_command)
-    #     navigate:
-    #       - SUCCESS: SUCCESS
-    #       - FAILURE: on_failure
-
-    # Define the failure path
-    - on_failure:
+    # Step 3: Check the result of the WLST script execution
+    - check_wlst_result:
         do:
-          # Placeholder for any specific failure handling logic if needed
-          # For now, just transitions to the FAILURE result
-          io.cloudslang.base.utils.do_nothing: []
+          # Simple check: Assume WLST script exits non-zero on error.
+          # A more robust check might parse ssh_return_result for specific
+          # success or error messages from WLST.
+          io.cloudslang.base.comparisons.equals:
+            - compare_value: ${ssh_return_code}
+            - equal_to: "0"
         navigate:
-          - SUCCESS: FAILURE # Ensure it always goes to the FAILURE result
+          # If ssh_return_code is 0, assume WLST script succeeded
+          - SUCCESS: SUCCESS
+          # If ssh_return_code is non-zero, assume WLST script failed
+          - FAILURE: on_failure
 
   outputs:
-    - apache_stop_output: ${apache_stop_output}
-    - apache_stop_error: ${apache_stop_error}
-    - apache_stop_return_code: ${apache_stop_return_code}
+    - status: # Provide a simple status output
+        value: ${ 'Application ' + app_name + ' stop command executed successfully.' if ssh_return_code == '0' else 'Failed to stop application ' + app_name + '.' }
+    - wlst_output: ${ssh_return_result}
+    - wlst_exit_code: ${ssh_return_code}
+    - error_details: ${ssh_exception} # Captures SSH execution errors
 
   results:
-    - SUCCESS: ${apache_stop_return_code == '0'} # Define success condition based on command execution
-    - FAILURE
+    - SUCCESS # Reached if check_wlst_result comparison is true (exit code 0)
+    - FAILURE # Reached if any step navigates to on_failure
