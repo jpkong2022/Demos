@@ -113,15 +113,6 @@ flow:
           - SUCCESS: FAILURE # Ensure it always goes to the FAILURE result
 
   outputs:
-    - status_message:
-        # Provide a status message based on success or intermediate outputs
-        # This is a simplified example; more logic could be added
-        value: >
-          ${
-            (result == 'SUCCESS')
-            ? ('Successfully stopped Apache service ' + apache_service_name + ' on ' + apache_host)
-            : ('Failed to stop Apache service. Error: ' + apache_stop_error + ' Output: ' + apache_stop_output)
-          }
     - apache_stop_output: ${apache_stop_output}
     - apache_stop_error: ${apache_stop_error}
     - apache_stop_return_code: ${apache_stop_return_code}
