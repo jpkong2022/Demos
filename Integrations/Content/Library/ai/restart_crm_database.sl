@@ -31,11 +31,9 @@ flow:
           - SUCCESS: SUCCESS
           # If the ssh command fails (non-zero exit code, connection error, etc.), flow fails
           - FAILURE: on_failure
-
   outputs:
     - command_output: '${restart_output}'
     - return_code: '${return_code}'
-
   results:
     - SUCCESS
     - FAILURE
