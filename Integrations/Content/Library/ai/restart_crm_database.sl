@@ -34,7 +34,7 @@ flow:
 
   outputs:
     - command_output: '${restart_output}'
-    - exit_code: '${return_code}'
+    - return_code: '${return_code}'
 
   results:
     - SUCCESS
