@@ -20,7 +20,7 @@ flow:
                 sensitive: true
             # Command to restart the specific postgresql service identified for CRM
             # Using systemctl which is common on modern Linux. Requires sudo.
-            - command: 'sudo systemctl restart postgresql-17'
+            - command: sudo systemctl restart postgresql-17
             # pty might be needed for sudo interactions, depending on sudoers config
             - pty: true
         publish:
