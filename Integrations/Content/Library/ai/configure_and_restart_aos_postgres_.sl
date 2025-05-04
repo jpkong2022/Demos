@@ -1,6 +1,6 @@
 namespace: ai
 flow:
-  name: configure_and_restart_aos_postgres
+  name: configure_and_restart_aos_postgres_
   workflow:
     - modify_postgres_config:
         do:
