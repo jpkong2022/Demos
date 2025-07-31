@@ -13,12 +13,12 @@ flow:
                 value: "${get_sp('admin_password')}"
                 sensitive: true
             - auth_type: basic
-            - script: "$configFile = 'C:\\Program Files\\PostgreSQL\\12\\data\\postgresql.conf'
+            - script: "$configFile = \"C:\\Program Files\\PostgreSQL\\12\\data\\postgresql.conf\"
 if (Test-Path $configFile) {
     (Get-Content $configFile) -replace '^(#?)max_locks_per_transaction\\s*=.*', 'max_locks_per_transaction = 20' | Set-Content $configFile
-    Write-Host 'Configuration updated: max_locks_per_transaction set to 20 in $configFile'
+    Write-Host \"Configuration updated: max_locks_per_transaction set to 20 in $configFile\"
 } else {
-    Write-Error 'Configuration file not found at $configFile'
+    Write-Error \"Configuration file not found at $configFile\"
     exit 1
 }
 "
