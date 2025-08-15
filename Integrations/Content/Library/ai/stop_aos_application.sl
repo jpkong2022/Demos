@@ -17,9 +17,9 @@ flow:
             - trust_all_roots: 'true'
             - x_509_hostname_verifier: allow_all
         navigate:
-          - SUCCESS: stop_aos_db_server
+          - SUCCESS: stop_aos_database
           - FAILURE: on_failure
-    - stop_aos_db_server:
+    - stop_aos_database:
         do:
           io.cloudslang.base.powershell.powershell_script:
             - host: 172.31.26.86
