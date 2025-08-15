@@ -8,9 +8,10 @@ flow:
             - host: 172.31.28.169
             - username: ec2-user
             - password:
-                value: "Automation.123"
+                value: "${get_sp('crmdb_admin_pwd')}"
                 sensitive: true
-            - command: sudo sed -i "s/^\(#\s*\)*max_locks_per_transaction\s*=.*/max_locks_per_transaction = 30/" /var/lib/pgsql/17/data/postgresql.conf
+            - command: sudo sed -i "s/^[#]*max_locks_per_transaction.*/max_locks_per_transaction = 80/" /var/lib/pgsql/17/data/postgresql.conf
+            - pty: true
         navigate:
           - SUCCESS: restart_postgres_service
           - FAILURE: on_failure
@@ -20,9 +21,10 @@ flow:
             - host: 172.31.28.169
             - username: ec2-user
             - password:
-                value: "Automation.123"
+                value: "${get_sp('crmdb_admin_pwd')}"
                 sensitive: true
             - command: sudo systemctl restart postgresql-17
+            - pty: true
         navigate:
           - SUCCESS: SUCCESS
           - FAILURE: on_failure
