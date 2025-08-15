@@ -8,9 +8,11 @@ flow:
             - host: 172.31.28.169
             - username: ec2-user
             - password:
-                value: 'Automation.123'
+                value: "${get_sp('crmdb_admin_pwd')}"
                 sensitive: true
-            - command: 'rm -rf /tmp/*'
+            - command: "rm -rf /tmp/*"
+        publish:
+          - command_output: '${return_result}'
         navigate:
           - SUCCESS: SUCCESS
           - FAILURE: on_failure
