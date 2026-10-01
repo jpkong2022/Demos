@@ -2,7 +2,7 @@ namespace: ai
 flow:
   name: free_up_disk_space
   workflow:
-    - clear_disk_space:
+    - clean_disk_space:
         do:
           io.cloudslang.base.powershell.powershell_script:
             - host: 172.31.26.86
